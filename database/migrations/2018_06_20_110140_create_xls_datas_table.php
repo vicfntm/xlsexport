@@ -18,9 +18,9 @@ class CreateXlsDatasTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('surname')->nullable();
-            $table->integer('birth_year')->unsigned();
+            $table->integer('birth_year')->nullable();
             $table->string('occupation')->nullable();
-            $table->integer('annual_salary')->unsigned();
+            $table->integer('annual_salary')->nullable();
             $table->string('filename')->index();
             $table->timestamps();
         });

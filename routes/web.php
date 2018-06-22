@@ -17,4 +17,5 @@ Route::get('/', function () {
 
 Route::resource('xls', 'XlsController');
 Route::post('loadfile', 'XlsController@loadFile');
+Route::post('store-row', 'XlsController@storeRow');
 Route::delete('clearData/{name}', 'XlsController@deleteWholeFile');

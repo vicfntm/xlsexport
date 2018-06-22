@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\XlsData;
 use PhpOffice\PhpSpreadsheet\Exception;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\DB;
@@ -190,5 +191,26 @@ class XlsController extends Controller
         }
 
         return response()->json(['statusText' => 'Файл успешно удален','class' => 'alert-success', 'code' => 1,]);
+    }
+//receives
+//  first_name
+//  middle_name
+//  surname
+//  birth_year
+//  occupation
+//  name
+    public function storeRow(Request $request){
+        $rowData = $request->data;
+        $tableName = $request->name;
+        $element = new XlsData();
+        $element->first_name = $rowData['first_name'];
+        $element->middle_name = $rowData['middle_name'];
+        $element->surname = $rowData['surname'];
+        $element->birth_year = $rowData['birth_year'];
+        $element->occupation = $rowData['occupation'];
+        $element->filename = $tableName;
+        $element->save();
+
+        return response()->json(['statusText' => 'Запись успешно добавлена','class' => 'alert-success', 'code' => 1,]);
     }
 }

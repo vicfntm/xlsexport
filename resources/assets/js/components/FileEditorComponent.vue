@@ -16,6 +16,21 @@
             <div class="col-md-1"><span class="glyphicon glyphicon-ok" aria-hidden="true" @click="saveData(rows[index], rows[index].id)"></span></div>
             <div class="col-md-1"><span class="glyphicon glyphicon-remove" aria-hidden="true" @click="deleteData(rows[index], rows[index].id)"></span></div>
         </div>
+        <div class="row" v-show="isCreationActive">
+            <hr>
+            <div class="col-md-10">
+                <div class="col-md-2" v-for="el in columns">
+                <input type="text" class="form-control editor-input" aria-label="..." v-model="elementToBeCreate[el]">
+                </div>
+            </div>
+            <div class="col-md-1"><span class="glyphicon glyphicon-ok" aria-hidden="true" @click="createRow"></span></div>
+            <div class="col-md-1"></div>
+        </div>
+        <div class="row pt4" v-show="currentFileName">
+            <div class="col-md-12">
+                <div class="upload-file"><span class="glyphicon glyphicon-plus upl-button" aria-hidden="true" title="Добавление записи в таблицу" @click="isCreationActive = true"></span></div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -31,7 +46,17 @@
                 rows: [],
                 AlertText: '',
                 alertClass: '',
-                isAlertActive: false
+                isAlertActive: false,
+                elementToBeCreate: {
+                    first_name: '',
+                    middle_name: '',
+                    surname: '',
+                    birth_year: '',
+                    occupation: '',
+                    annual_salary: ''
+                },
+                isCreationActive: false
+
             }
         },
         created(){
@@ -99,6 +124,47 @@
                             this.AlertText = '';
                         }, 3000);
                     })
+            },
+            createRow(){
+                axios.post('/store-row', {name: this.currentFileName, data: this.elementToBeCreate})
+                    .then(response=>{
+                        console.log(response.data);
+                        this.rows.push(
+                            {
+                                first_name: this.elementToBeCreate.first_name,
+                                middle_name: this.elementToBeCreate.middle_name,
+                                surname: this.elementToBeCreate.surname,
+                                birth_year: this.elementToBeCreate.birth_year,
+                                occupation: this.elementToBeCreate.occupation,
+                                annual_salary: this.elementToBeCreate.annual_salary,
+                                filename: this.currentFileName
+                            }
+                        );
+                        this.elementToBeCreate.first_name = '';
+                        this.elementToBeCreate.middle_name = '';
+                        this.elementToBeCreate.surname = '';
+                        this.elementToBeCreate.birth_year = '';
+                        this.elementToBeCreate.occupation = '';
+                        this.elementToBeCreate.annual_salary = '';
+                        this.isAlertActive = true;
+                        this.alertClass = response.data.class;
+                        this.AlertText = response.data.statusText;
+                        setTimeout(()=>{
+                            this.isAlertActive = false;
+                            this.alertClass = '';
+                            this.AlertText = '';
+                        }, 3000);
+                     })
+                    .catch(error=>{
+                        this.isAlertActive = true;
+                        this.alertClass = response.data.class;
+                        this.AlertText = response.data.statusText;
+                        setTimeout(()=>{
+                            this.isAlertActive = false;
+                            this.alertClass = '';
+                            this.AlertText = '';
+                        }, 3000);
+                    });
             }
         }
     }
@@ -120,5 +186,25 @@
     /*calc only just a little reminder that mb1 = 4px */
     .mb4{
         margin-bottom: calc( 4px * 4 );
+    }
+    .pt4{
+        padding-top: calc( 4px * 4);
+    }
+    .upload-file{
+        width: 32px;
+        height: 84px;
+        position: relative;
+        text-align: right;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .upl-button{
+        border-radius: 50%;
+        font-size: 44px;
+        background-color: #00E676;
+        position: absolute;
+        padding: 50%;
+        color: white;
+        cursor: pointer;
     }
 </style>
